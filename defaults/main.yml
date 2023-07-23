@@ -1,0 +1,41 @@
+---
+#Common
+postgres_user_uid: 70
+cluster_docker_network_name: default_patroni_cluster
+cluster_database_dir: /var/lib/postgres/
+cluster_timezone: UTC
+
+ansible_host: localhost
+cluster_name: cluster_1
+cluster_host_ip: 192.168.1.1
+cluster_peer1_ip: 192.168.1.2
+cluster_peer2_ip: 192.168.1.3
+
+consul_docker_labels:
+  - postgres
+  - consul
+consul_image: consul
+consul_image_version:
+consul_container_name: consul
+
+patroni_config_dir: /etc/patroni/
+patroni_image: patroni
+patroni_image_version:
+patroni_config_dir: /etc/patroni/
+patroni_admin_password: secret
+patroni_tags:
+  tags:
+      nofailover: false
+      noloadbalance: false
+      clonefrom: false
+      nosync: false
+patroni_docker_labels:
+  - postgres
+  - patroni
+
+ostgres
+postgres_replication_username: replicator
+postgres_replication_password: secret
+postgres_superuser_username: postgres
+postgres_superuser_password: secret
+

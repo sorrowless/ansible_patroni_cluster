@@ -1,0 +1,44 @@
+---
+- name: Include docker-related consul task
+  include_tasks: run_consul_in_docker.yml
+
+- name: Add the user postgres
+  ansible.builtin.user:
+    name: postgres
+    comment: user for postgres
+    uid: "{{ postgres_user_uid }}"
+
+- name: Ensure database dir
+  become: yes
+  become_user: root
+  file:
+    path: "{{ cluster_database_dir }}"
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Ensure config dir
+  become: yes
+  become_user: root
+  file:
+    path: "{{ patroni_config_dir }}"
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Ensure config file
+  template:
+    src: "patroni.j2"
+    dest: "{{ patroni_config_dir }}/patroni.yml"
+    mode: "600"
+    owner: postgres
+  notify:
+    - Restart Docker container
+
+
+- name: Include docker-related patroni tasks
+  include_tasks: run_in_docker.yml
+
+

@@ -1,0 +1,30 @@
+---
+- name: Start docker consul container
+  community.docker.docker_compose:
+    state: present
+    project_name: patroni_cluster
+    definition:
+      version: '2'
+      services:
+        consul:
+          image: "{{ consul_image }}":"{{ consul_image_version }}"
+          container_name: "{{ consul_container_name }}"
+          ports:
+            - "8300:8300"
+            - "8301:8301"
+            - "8301:8301/udp"
+            - "8302:8302"
+            - "8302:8302/udp"
+            - "8400:8400"
+            - "8500:8500"
+            - "8600:8600/udp"
+          environment:
+            TZ: "{{ cluster_timezone }}"
+          hostname: "{{ ansible_host }}"
+          restart: always
+          labels: "{{ consul_docker_labels }}"
+          command: "agent -server -advertise {{ cluster_host_ip }} -bootstrap-expect 3 -client 0.0.0.0  -retry-join {{ cluster_peer1_ip }} -retry-join {{ cluster_peer2_ip }}"
+      networks:
+        default:
+          external:
+            name: "{{ cluster_docker_network_name }}"

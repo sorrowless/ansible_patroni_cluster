@@ -1,0 +1,53 @@
+scope: {{ cluster_name }}
+
+restapi:
+    listen: 0.0.0.0:8008
+    connect_address: {{ cluster_host_ip }}:8008
+
+bootstrap:
+    dcs:
+        ttl: 130
+        loop_wait: 10
+        retry_timeout: 60
+        maximum_lag_on_failover: 1048576
+        postgresql:
+            use_pg_rewind: true
+            parameters:
+                max_connections: 550
+                max_locks_per_transaction: 512
+                max_worker_processes: 27
+
+    initdb:
+    - encoding: UTF8
+    - data-checksums
+
+
+    users:
+        admin:
+            password: {{ patroni_admin_password }}
+            options:
+                - createrole
+                - createdb
+
+
+
+postgresql:
+    listen: 0.0.0.0:5432
+    connect_address: {{ cluster_host_ip }}:5432
+    config_dir: /patroni_db/postgresql/data/
+    data_dir: /patroni_db/postgresql/data/
+    pg_hba:
+        - host replication replicator 127.0.0.1/32 md5
+        - host replication replicator {{ cluster_host_ip }}/32 md5
+        - host replication replicator {{ cluster_peer1_ip }}/32 md5
+        - host replication replicator {{ cluster_peer2_ip }}/32 md5
+        - host all all 0.0.0.0/0 md5
+    authentication:
+        replication:
+            username: {{ postgres_replication_username }}
+            password: {{ postgres_replication_password }}
+        superuser:
+            username: {{ postgres_superuser_username }}
+            password: {{ postgres_superuser_password }}
+
+{{ patroni_tags }}

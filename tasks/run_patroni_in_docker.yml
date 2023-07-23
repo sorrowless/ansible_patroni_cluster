@@ -1,0 +1,32 @@
+---
+- name: Start docker consul container
+  community.docker.docker_compose:
+    state: present
+    project_name: patroni_cluster
+    definition:
+      version: '2'
+      services:
+        consul:
+          image: "{{ patroni_image }}":"{{ patroni_image_version }}"
+          container_name: "{{ patroni_container_name }}"
+          ports:
+            - "8008:8008"
+            - "5432:5432"
+          environment:
+            TZ: "{{ cluster_timezone }}"
+            PATRONI_NAME: "{{ patroni_name }}"
+            PATRONI_POSTGRESQL_DATA_DIR: /patroni_db/postgresql/data
+            PATRONI_CONSUL_HOST: "http://{{ consul_container_name }}:8500"
+            PATRONI_CONSUL_URL: "http://{{ consul_container_name }}:8500/v1/"
+          restart: always
+          labels: "{{ patroni_docker_labels }}"
+          volumes:
+            - /var/lib/postgres/multiadmin/:/patroni_db/
+            - "{{ patroni_config_dir }}/patroni.yml:/patroni.yml"     
+      networks:
+        default:
+          external:
+            name: "{{ cluster_docker_network_name }}"
+
+
+
