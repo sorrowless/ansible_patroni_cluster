@@ -15,7 +15,7 @@
     path: "{{ cluster_database_dir }}"
     state: directory
     mode: 0755
-    owner: root
+    owner: postgres
     group: root
 
 - name: Ensure config dir
@@ -34,11 +34,11 @@
     dest: "{{ patroni_config_dir }}/patroni.yml"
     mode: "600"
     owner: postgres
-  notify:
-    - Restart Docker container
+  # notify:
+  #   - Restart Docker container
 
 
 - name: Include docker-related patroni tasks
-  include_tasks: run_in_docker.yml
+  include_tasks: run_patroni_in_docker.yml
 
 

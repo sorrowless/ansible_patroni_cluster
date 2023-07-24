@@ -7,7 +7,7 @@
       version: '2'
       services:
         consul:
-          image: "{{ consul_image }}":"{{ consul_image_version }}"
+          image: "{{ consul_image }}:{{ consul_image_version }}"
           container_name: "{{ consul_container_name }}"
           ports:
             - "8300:8300"
@@ -20,11 +20,8 @@
             - "8600:8600/udp"
           environment:
             TZ: "{{ cluster_timezone }}"
-          hostname: "{{ ansible_host }}"
+          hostname: "{{ consul_host }}"
           restart: always
           labels: "{{ consul_docker_labels }}"
           command: "agent -server -advertise {{ cluster_host_ip }} -bootstrap-expect 3 -client 0.0.0.0  -retry-join {{ cluster_peer1_ip }} -retry-join {{ cluster_peer2_ip }}"
-      networks:
-        default:
-          external:
-            name: "{{ cluster_docker_network_name }}"
+

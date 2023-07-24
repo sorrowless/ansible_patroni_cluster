@@ -1,14 +1,15 @@
 ---
-- name: Start docker consul container
+- name: Start docker patroni container
   community.docker.docker_compose:
     state: present
     project_name: patroni_cluster
     definition:
       version: '2'
       services:
-        consul:
-          image: "{{ patroni_image }}":"{{ patroni_image_version }}"
+        patroni:
+          image: "{{ patroni_image }}:{{ patroni_image_version }}"
           container_name: "{{ patroni_container_name }}"
+          user: postgres
           ports:
             - "8008:8008"
             - "5432:5432"
@@ -21,12 +22,9 @@
           restart: always
           labels: "{{ patroni_docker_labels }}"
           volumes:
-            - /var/lib/postgres/multiadmin/:/patroni_db/
+            - "{{ cluster_database_dir }}:/patroni_db/"
             - "{{ patroni_config_dir }}/patroni.yml:/patroni.yml"     
-      networks:
-        default:
-          external:
-            name: "{{ cluster_docker_network_name }}"
+
 
 
 
