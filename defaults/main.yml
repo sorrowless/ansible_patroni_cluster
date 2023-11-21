@@ -41,4 +41,7 @@ postgres_replication_username: replicator
 postgres_replication_password: secret
 postgres_superuser_username: postgres
 postgres_superuser_password: secret
-
+dsc_postgres_parametrs:
+    max_connections: 550
+    max_locks_per_transaction: 512
+    max_worker_processes: 27

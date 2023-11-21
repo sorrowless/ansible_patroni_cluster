@@ -1,9 +1,9 @@
 ---
 galaxy_info:
-  description: Ansible role to deploy Prometheus nginx exporter
+  description: Ansible role to deploy postgres partroni cluster
   company: Personal project
-  role_name: ansible_prometheus_nginx_exporter
- 
+  role_name: ansible_partroni_cluster
+
 
   license: Apache
 
@@ -14,7 +14,7 @@ galaxy_info:
       versions:
         - focal
 
-  galaxy_tags: [prometheus, monitoring]
+  galaxy_tags: [postgres, db, partroni]
 
 dependencies: []
 # List your role dependencies here, one per line. Be sure to remove the '[]' above,

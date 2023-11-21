@@ -1,7 +1,0 @@
----
-- name: Restart Docker container
-  docker_container:
-    name: "{{ patroni_container_name }}"
-    image: "{{ patroni_image }}:{{ patroni_image_version }}"
-    state: started
-    restart: yes

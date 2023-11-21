@@ -12,10 +12,7 @@ bootstrap:
         maximum_lag_on_failover: 1048576
         postgresql:
             use_pg_rewind: true
-            parameters:
-                max_connections: 550
-                max_locks_per_transaction: 512
-                max_worker_processes: 27
+            parameters: {{ dsc_postgres_parametrs }}
 
     initdb:
     - encoding: UTF8

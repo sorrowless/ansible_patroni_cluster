@@ -23,8 +23,4 @@
           labels: "{{ patroni_docker_labels }}"
           volumes:
             - "{{ cluster_database_dir }}:/patroni_db/"
-            - "{{ patroni_config_dir }}/patroni.yml:/patroni.yml"     
-
-
-
-
+            - "{{ patroni_config_dir }}/patroni.yml:/patroni.yml"

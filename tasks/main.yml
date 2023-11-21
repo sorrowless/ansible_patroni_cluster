@@ -34,11 +34,6 @@
     dest: "{{ patroni_config_dir }}/patroni.yml"
     mode: "600"
     owner: postgres
-  # notify:
-  #   - Restart Docker container
-
 
 - name: Include docker-related patroni tasks
   include_tasks: run_patroni_in_docker.yml
-
-
