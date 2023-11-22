@@ -10,9 +10,7 @@
           image: "{{ patroni_image }}:{{ patroni_image_version }}"
           container_name: "{{ patroni_container_name }}"
           user: postgres
-          ports:
-            - "8008:8008"
-            - "5432:5432"
+          ports: "{{ patroni_expose_ports }}"
           environment:
             TZ: "{{ cluster_timezone }}"
             PATRONI_NAME: "{{ patroni_name }}"

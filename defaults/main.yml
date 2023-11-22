@@ -5,12 +5,12 @@ cluster_docker_network_name: default_patroni_cluster
 cluster_database_dir: /var/lib/postgres/
 cluster_timezone: UTC
 
-
 cluster_name: cluster_1
 cluster_host_ip: 192.168.1.1
 cluster_peer1_ip: 192.168.1.2
 cluster_peer2_ip: 192.168.1.3
 
+#consul
 consul_host: localhost
 consul_docker_labels:
   - postgres
@@ -18,7 +18,20 @@ consul_docker_labels:
 consul_image: consul
 consul_image_version: 1.15.4
 consul_container_name: consul
+consul_expose_ports:
+    - "8300:8300"
+    - "8301:8301"
+    - "8301:8301/udp"
+    - "8302:8302"
+    - "8302:8302/udp"
+    - "8400:8400"
+    - "8500:8500"
+    - "8600:8600/udp"
 
+#patroni
+patroni_listen_address: 0.0.0.0
+patroni_listen_port: 8008
+patroni_connect_port: "{{ patroni_listen_port }}"
 patroni_name: memeber_1
 patroni_container_name: patroni
 patroni_config_dir: /etc/patroni/
@@ -35,12 +48,38 @@ patroni_tags: |
 patroni_docker_labels:
   - postgres
   - patroni
+patroni_expose_ports:
+    - "{{ patroni_connect_port }}:{{ patroni_listen_port }}"
+    - "{{ postgres_connect_port }}:{{ postgres_listen_port }}"
+
 
 #Postgres
+postgres_listen_address: 0.0.0.0
+postgres_listen_port: 5432
+postgres_connect_port: "{{ postgres_listen_port }}"
 postgres_replication_username: replicator
 postgres_replication_password: secret
 postgres_superuser_username: postgres
 postgres_superuser_password: secret
+postgres_config_dir: /patroni_db/postgresql/data/
+postgres_data_dir: /patroni_db/postgresql/data/
+postgresql_pg_hba:
+    - host replication replicator 127.0.0.1/32 md5
+    - host replication replicator {{ cluster_host_ip }}/32 md5
+    - host replication replicator {{ cluster_peer1_ip }}/32 md5
+    - host replication replicator {{ cluster_peer2_ip }}/32 md5
+    - host all all 0.0.0.0/0 md5
+
+#dsc_config
+dsc_config: |
+  dcs:
+      ttl: 130
+      loop_wait: 10
+      retry_timeout: 60
+      maximum_lag_on_failover: 1048576
+      postgresql:
+          use_pg_rewind: true
+          parameters: {{ dsc_postgres_parametrs }}
 dsc_postgres_parametrs:
     max_connections: 550
     max_locks_per_transaction: 512

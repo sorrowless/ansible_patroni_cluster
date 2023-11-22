@@ -1,18 +1,11 @@
 scope: {{ cluster_name }}
 
 restapi:
-    listen: 0.0.0.0:8008
-    connect_address: {{ cluster_host_ip }}:8008
+    listen: {{ patroni_listen_address }}:{{ patroni_listen_port }}
+    connect_address: {{ cluster_host_ip }}:{{ patroni_connect_port }}
 
 bootstrap:
-    dcs:
-        ttl: 130
-        loop_wait: 10
-        retry_timeout: 60
-        maximum_lag_on_failover: 1048576
-        postgresql:
-            use_pg_rewind: true
-            parameters: {{ dsc_postgres_parametrs }}
+    {{ dsc_config }}
 
     initdb:
     - encoding: UTF8
@@ -29,16 +22,11 @@ bootstrap:
 
 
 postgresql:
-    listen: 0.0.0.0:5432
-    connect_address: {{ cluster_host_ip }}:5432
-    config_dir: /patroni_db/postgresql/data/
-    data_dir: /patroni_db/postgresql/data/
-    pg_hba:
-        - host replication replicator 127.0.0.1/32 md5
-        - host replication replicator {{ cluster_host_ip }}/32 md5
-        - host replication replicator {{ cluster_peer1_ip }}/32 md5
-        - host replication replicator {{ cluster_peer2_ip }}/32 md5
-        - host all all 0.0.0.0/0 md5
+    listen: {{ postgres_listen_address }}:{{ postgres_listen_port }}
+    connect_address: {{ cluster_host_ip }}:{{ postgres_connect_port }}
+    config_dir: {{ postgres_config_dir }}
+    data_dir: {{ postgres_data_dir }}
+    pg_hba: {{ postgresql_pg_hba }}
     authentication:
         replication:
             username: {{ postgres_replication_username }}
