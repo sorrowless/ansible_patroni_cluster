@@ -22,7 +22,7 @@ consul_container_name: consul
 patroni_name: memeber_1
 patroni_container_name: patroni
 patroni_config_dir: /etc/patroni/
-patroni_image: andrewdevoom/patroni_cluster
+patroni_image: andrewdevoom/patroni_bullseye_cluster
 patroni_image_version: v1.0
 patroni_config_dir: /etc/patroni/
 patroni_admin_password: secret
