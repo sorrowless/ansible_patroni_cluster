@@ -5,7 +5,7 @@ restapi:
     connect_address: {{ cluster_host_ip }}:{{ patroni_connect_port }}
 
 bootstrap:
-    {{ dsc_config }}
+    {{ dsc_config|indent(4) }}
 
     initdb:
     - encoding: UTF8
