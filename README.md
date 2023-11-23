@@ -1,7 +1,7 @@
-## AndrewGodGivens /ansible_ansible_nginx_exporter 
+## AndrewGodGivens /ansible_patroni_cluster
 ============
 
-An Ansible role which installs and configures ansible nginx_exporter on Linux
+An Ansible role which installs and configures ansible postgres cluster with patroni on Linux
 
 ============
 
@@ -18,11 +18,13 @@ You can see all vars in defaults/main.yml vars file.
 ## Example Playbook
 
 ```yaml
-- name: Ensure ansible_nginx_exporter
-  hosts: ansible_nginx_exporters
+---
+- name: Install and configure wal-g
+  hosts: patroni_cluster
   remote_user: root
+  become: yes
 
   roles:
-    - ansible_nginx_exporter
-  
+    - ansible_patroni_cluster
+
 ```
