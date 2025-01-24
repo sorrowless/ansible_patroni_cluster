@@ -8,6 +8,7 @@
       services:
         patroni:
           image: "{{ patroni_image }}:{{ patroni_image_version }}"
+          shm_size: 1g
           container_name: "{{ patroni_container_name }}"
           user: postgres
           ports: "{{ patroni_expose_ports }}"

@@ -2,7 +2,7 @@
 galaxy_info:
   description: Ansible role to deploy postgres partroni cluster
   company: Personal project
-  role_name: ansible_partroni_cluster
+  role_name: partroni_cluster
 
 
   license: Apache
