@@ -7,7 +7,7 @@
       services: "{{ { item.service_name: {
           'image': item.image_name,
           'shm_size': item.shm_size,
-          'container_name': item.service_name,
+          'container_name': item.container_name,
           'user': item.superuser_username,
           'environment': item.environment,
           'restart': 'always',

@@ -50,7 +50,8 @@ patroni_docker_labels:
   - patroni
 patroni_cluster_defaults:
   cluster_name: "{{ cluster_name }}"   # need to change
-  service_name: "{{ cluster_name }}"   # need to change (container_name, service_name)
+  service_name: "{{ cluster_name }}"   # need to change
+  container_name: "{{ cluster_name }}"   # need to change
   image_name: "{{ patroni_image }}:{{ patroni_image_version }}"
   shm_size: "{{ patroni_shm_size }}"
   superuser_username: "{{ postgres_superuser_username }}"

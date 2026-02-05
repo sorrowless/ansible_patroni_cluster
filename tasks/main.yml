@@ -8,7 +8,11 @@
   tags: always
 
 - name: Include docker-related consul task
-  include_tasks: run_consul_in_docker.yml
+  include_tasks:
+    file: "run_consul_in_docker.yml"
+    apply:
+      tags: consul
+  tags: consul
 
 - name: Add the user postgres
   ansible.builtin.user:
