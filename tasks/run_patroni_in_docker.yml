@@ -21,6 +21,10 @@
             item.config_dir ~ '/patroni.yml:/patroni.yml'
           ]
         } } }}"
+      networks:
+        default:
+          name: "{{ cluster_docker_network_name }}"
+          external: true
   loop: "{{ patroni_cluster_list }}"
   loop_control:
     label: "{{ item.service_name }}"

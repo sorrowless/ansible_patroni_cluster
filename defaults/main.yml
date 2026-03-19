@@ -34,6 +34,8 @@ patroni_listen_address: 0.0.0.0
 patroni_listen_port: 8008
 patroni_connect_port: "{{ patroni_listen_port }}"
 patroni_name: memeber_1
+patroni_service_name: patroni
+patroni_container_name: patroni
 patroni_config_dir: /etc/patroni
 patroni_image: ageres210784/patroni
 patroni_image_version: "18.0"
@@ -50,8 +52,8 @@ patroni_docker_labels:
   - patroni
 patroni_cluster_defaults:
   cluster_name: "{{ cluster_name }}"   # need to change
-  service_name: "{{ cluster_name }}"   # need to change
-  container_name: "{{ cluster_name }}"   # need to change
+  service_name: "{{ patroni_service_name }}"   # need to change
+  container_name: "{{ patroni_container_name }}"   # need to change
   image_name: "{{ patroni_image }}:{{ patroni_image_version }}"
   shm_size: "{{ patroni_shm_size }}"
   superuser_username: "{{ postgres_superuser_username }}"
@@ -76,7 +78,7 @@ patroni_clusters:
   - cluster_name: "{{ cluster_name }}"
 
 
-#Postgres
+# Postgres
 postgres_listen_address: 0.0.0.0
 postgres_listen_port: 5432
 postgres_connect_port: "{{ postgres_listen_port }}"
@@ -87,13 +89,13 @@ postgres_superuser_password: secret
 postgres_config_dir: "{{ postgres_data_dir }}"
 postgres_data_dir: /patroni_db/postgresql/data
 postgresql_pg_hba:
-    - host replication replicator 127.0.0.1/32 md5
-    - host replication replicator {{ cluster_host_ip }}/32 md5
-    - host replication replicator {{ cluster_peer1_ip }}/32 md5
-    - host replication replicator {{ cluster_peer2_ip }}/32 md5
-    - host all all 0.0.0.0/0 md5
+  - host replication replicator 127.0.0.1/32 md5
+  - host replication replicator {{ cluster_host_ip }}/32 md5
+  - host replication replicator {{ cluster_peer1_ip }}/32 md5
+  - host replication replicator {{ cluster_peer2_ip }}/32 md5
+  - host all all 0.0.0.0/0 md5
 
-#dsc_config
+# dsc_config
 dsc_config: |
   dcs:
       ttl: 130
@@ -104,6 +106,6 @@ dsc_config: |
           use_pg_rewind: true
           parameters: {{ dsc_postgres_parametrs }}
 dsc_postgres_parametrs:
-    max_connections: 550
-    max_locks_per_transaction: 512
-    max_worker_processes: 27
+  max_connections: 550
+  max_locks_per_transaction: 512
+  max_worker_processes: 27

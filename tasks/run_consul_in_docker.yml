@@ -15,3 +15,7 @@
           restart: always
           labels: "{{ consul_docker_labels }}"
           command: "{{ consul_docker_command }}"
+      networks:
+        default:
+          name: "{{ cluster_docker_network_name }}"
+          external: true
