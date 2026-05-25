@@ -30,6 +30,9 @@ consul_expose_ports:
     - "8600:8600/udp"
 
 #patroni
+patroni_manage_os_user: true
+patroni_extra_volumes: []
+
 patroni_listen_address: 0.0.0.0
 patroni_listen_port: 8008
 patroni_connect_port: "{{ patroni_listen_port }}"
@@ -67,6 +70,7 @@ patroni_cluster_defaults:
   labels: "{{ patroni_docker_labels }}"
   database_dir: "{{ cluster_database_dir }}"    # need to change
   config_dir: "{{ patroni_config_dir }}"    # need to change
+  extra_volumes: "{{ patroni_extra_volumes }}"
   pg_hba: "{{ postgresql_pg_hba }}"
   host_ip: "{{ cluster_host_ip }}"
   patroni_connect_port: "{{ patroni_connect_port }}"    # need to change

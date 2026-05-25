@@ -8,7 +8,7 @@
           'image': item.image_name,
           'shm_size': item.shm_size,
           'container_name': item.container_name,
-          'user': item.superuser_username,
+          'user': postgres_user_uid | string,
           'environment': item.environment,
           'restart': 'always',
           'labels': item.labels,
@@ -19,7 +19,7 @@
           'volumes': [
             item.database_dir ~ ':/patroni_db',
             item.config_dir ~ '/patroni.yml:/patroni.yml'
-          ]
+          ] | union(item.extra_volumes))
         } } }}"
       networks:
         default:

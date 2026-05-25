@@ -19,6 +19,7 @@
     name: postgres
     comment: user for postgres
     uid: "{{ postgres_user_uid }}"
+  when: patroni_manage_os_user | default(true) | bool
 
 - name: Ensure database dir
   become: yes
@@ -26,8 +27,8 @@
   file:
     path: "{{ item.database_dir }}"
     state: directory
-    mode: 0755
-    owner: postgres
+    mode: "0755"
+    owner: "{{ postgres_user_uid }}"
     group: root
   loop: "{{ patroni_cluster_list }}"
   loop_control:
@@ -39,7 +40,7 @@
   file:
     path: "{{ item.config_dir }}"
     state: directory
-    mode: 0755
+    mode: "0755"
     owner: root
     group: root
   loop: "{{ patroni_cluster_list }}"
@@ -50,8 +51,8 @@
   template:
     src: "patroni.j2"
     dest: "{{ item.config_dir }}/patroni.yml"
-    mode: "600"
-    owner: postgres
+    mode: "0600"
+    owner: "{{ postgres_user_uid }}"
   loop: "{{ patroni_cluster_list }}"
   loop_control:
     label: "{{ item.config_dir }}/patroni.yml"
