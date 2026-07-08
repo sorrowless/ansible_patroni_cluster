@@ -4,19 +4,27 @@
     state: present
     project_name: patroni_cluster
     definition:
-      services:
-        patroni:
-          image: "{{ patroni_image }}:{{ patroni_image_version }}"
-          shm_size: "{{ patroni_shm_size }}"
-          container_name: "{{ patroni_container_name }}"
-          user: postgres
-          ports: "{{ patroni_expose_ports }}"
-          environment:
-            TZ: "{{ cluster_timezone }}"
-            PATRONI_NAME: "{{ patroni_name }}"
-            PATRONI_POSTGRESQL_DATA_DIR: /patroni_db/postgresql/data
-          restart: always
-          labels: "{{ patroni_docker_labels }}"
-          volumes:
-            - "{{ cluster_database_dir }}:/patroni_db/"
-            - "{{ patroni_config_dir }}/patroni.yml:/patroni.yml"
+      services: "{{ { item.service_name: {
+          'image': item.image_name,
+          'shm_size': item.shm_size,
+          'container_name': item.container_name,
+          'user': item.superuser_username,
+          'environment': item.environment,
+          'restart': 'always',
+          'labels': item.labels,
+          'ports': [
+            item.patroni_connect_port ~ ':' ~ patroni_listen_port,
+            item.postgres_connect_port ~ ':' ~ postgres_listen_port
+          ],
+          'volumes': [
+            item.database_dir ~ ':/patroni_db',
+            item.config_dir ~ '/patroni.yml:/patroni.yml'
+          ]
+        } } }}"
+      networks:
+        default:
+          name: "{{ cluster_docker_network_name }}"
+          external: true
+  loop: "{{ patroni_cluster_list }}"
+  loop_control:
+    label: "{{ item.service_name }}"

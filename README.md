@@ -56,6 +56,11 @@ Change the variable `consul_docker_command: "agent -server -advertise {{ cluster
 
 There's nothing to change, it all depends on the variables. Just run the playbook.
 
+### Install patroni multi cluster to the same nodes
+
+If you want to deploy multiple Patroni clusters on a single node, you need to use the patroni_clusters list variable. See `default/main.yml` for details. Variables that must differ between clusters are marked with `# need to change` in `patroni_cluster_defaults`.
+The same Consul instance is used.
+
 ## Example Playbook
 
 ```yaml

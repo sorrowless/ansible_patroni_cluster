@@ -1,8 +1,8 @@
-scope: {{ cluster_name }}
+scope: {{ item.cluster_name }}
 
 restapi:
     listen: {{ patroni_listen_address }}:{{ patroni_listen_port }}
-    connect_address: {{ cluster_host_ip }}:{{ patroni_connect_port }}
+    connect_address: {{ item.host_ip }}:{{ item.patroni_connect_port }}
 
 consul:
     host: {{ consul_container_name }}
@@ -10,7 +10,7 @@ consul:
     protocol: http
 
 bootstrap:
-    {{ dsc_config|indent(4) }}
+    {{ item.dsc_config|indent(4) }}
 
     initdb:
     - encoding: UTF8
@@ -28,16 +28,16 @@ bootstrap:
 
 postgresql:
     listen: {{ postgres_listen_address }}:{{ postgres_listen_port }}
-    connect_address: {{ cluster_host_ip }}:{{ postgres_connect_port }}
+    connect_address: {{ item.host_ip }}:{{ item.postgres_connect_port }}
     config_dir: {{ postgres_config_dir }}
     data_dir: {{ postgres_data_dir }}
-    pg_hba: {{ postgresql_pg_hba }}
+    pg_hba: {{ item.pg_hba }}
     authentication:
         replication:
-            username: {{ postgres_replication_username }}
-            password: {{ postgres_replication_password }}
+            username: {{ item.replication_username }}
+            password: {{ item.replication_password }}
         superuser:
-            username: {{ postgres_superuser_username }}
-            password: {{ postgres_superuser_password }}
+            username: {{ item.superuser_username }}
+            password: {{ item.superuser_password }}
 
-{{ patroni_tags }}
+{{ item.tags }}

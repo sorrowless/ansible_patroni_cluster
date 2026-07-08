@@ -34,8 +34,9 @@ patroni_listen_address: 0.0.0.0
 patroni_listen_port: 8008
 patroni_connect_port: "{{ patroni_listen_port }}"
 patroni_name: memeber_1
+patroni_service_name: patroni
 patroni_container_name: patroni
-patroni_config_dir: /etc/patroni/
+patroni_config_dir: /etc/patroni
 patroni_image: ageres210784/patroni
 patroni_image_version: "18.0"
 patroni_shm_size: 1g
@@ -49,12 +50,35 @@ patroni_tags: |
 patroni_docker_labels:
   - postgres
   - patroni
-patroni_expose_ports:
-    - "{{ patroni_connect_port }}:{{ patroni_listen_port }}"
-    - "{{ postgres_connect_port }}:{{ postgres_listen_port }}"
+patroni_cluster_defaults:
+  cluster_name: "{{ cluster_name }}"   # need to change
+  service_name: "{{ patroni_service_name }}"   # need to change
+  container_name: "{{ patroni_container_name }}"   # need to change
+  image_name: "{{ patroni_image }}:{{ patroni_image_version }}"
+  shm_size: "{{ patroni_shm_size }}"
+  superuser_username: "{{ postgres_superuser_username }}"
+  superuser_password: "{{ postgres_superuser_password }}"
+  replication_username: "{{ postgres_replication_username }}"
+  replication_password: "{{ postgres_replication_password }}"
+  environment:
+    TZ: "{{ cluster_timezone }}"
+    PATRONI_NAME: "{{ patroni_name }}"
+    PATRONI_POSTGRESQL_DATA_DIR: "{{ postgres_data_dir }}"
+  labels: "{{ patroni_docker_labels }}"
+  database_dir: "{{ cluster_database_dir }}"    # need to change
+  config_dir: "{{ patroni_config_dir }}"    # need to change
+  pg_hba: "{{ postgresql_pg_hba }}"
+  host_ip: "{{ cluster_host_ip }}"
+  patroni_connect_port: "{{ patroni_connect_port }}"    # need to change
+  postgres_connect_port: "{{ postgres_connect_port }}"    # need to change
+  dsc_config: "{{ dsc_config }}"
+  tags: "{{ patroni_tags }}"
+
+patroni_clusters:
+  - cluster_name: "{{ cluster_name }}"
 
 
-#Postgres
+# Postgres
 postgres_listen_address: 0.0.0.0
 postgres_listen_port: 5432
 postgres_connect_port: "{{ postgres_listen_port }}"
@@ -62,16 +86,16 @@ postgres_replication_username: replicator
 postgres_replication_password: secret
 postgres_superuser_username: postgres
 postgres_superuser_password: secret
-postgres_config_dir: /patroni_db/postgresql/data/
-postgres_data_dir: /patroni_db/postgresql/data/
+postgres_config_dir: "{{ postgres_data_dir }}"
+postgres_data_dir: /patroni_db/postgresql/data
 postgresql_pg_hba:
-    - host replication replicator 127.0.0.1/32 md5
-    - host replication replicator {{ cluster_host_ip }}/32 md5
-    - host replication replicator {{ cluster_peer1_ip }}/32 md5
-    - host replication replicator {{ cluster_peer2_ip }}/32 md5
-    - host all all 0.0.0.0/0 md5
+  - host replication replicator 127.0.0.1/32 md5
+  - host replication replicator {{ cluster_host_ip }}/32 md5
+  - host replication replicator {{ cluster_peer1_ip }}/32 md5
+  - host replication replicator {{ cluster_peer2_ip }}/32 md5
+  - host all all 0.0.0.0/0 md5
 
-#dsc_config
+# dsc_config
 dsc_config: |
   dcs:
       ttl: 130
@@ -82,6 +106,6 @@ dsc_config: |
           use_pg_rewind: true
           parameters: {{ dsc_postgres_parametrs }}
 dsc_postgres_parametrs:
-    max_connections: 550
-    max_locks_per_transaction: 512
-    max_worker_processes: 27
+  max_connections: 550
+  max_locks_per_transaction: 512
+  max_worker_processes: 27

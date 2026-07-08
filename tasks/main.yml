@@ -1,6 +1,18 @@
 ---
+- name: Build patroni cluster list with defaults
+  set_fact:
+    patroni_cluster_list: "{{ patroni_cluster_list | default([]) + [ patroni_cluster_defaults | combine(item) ] }}"
+  loop: "{{ patroni_clusters }}"
+  loop_control:
+    label: "{{ item.service_name | default('patroni') }}"
+  tags: always
+
 - name: Include docker-related consul task
-  include_tasks: run_consul_in_docker.yml
+  include_tasks:
+    file: "run_consul_in_docker.yml"
+    apply:
+      tags: consul
+  tags: consul
 
 - name: Add the user postgres
   ansible.builtin.user:
@@ -12,28 +24,41 @@
   become: yes
   become_user: root
   file:
-    path: "{{ cluster_database_dir }}"
+    path: "{{ item.database_dir }}"
     state: directory
     mode: 0755
     owner: postgres
     group: root
+  loop: "{{ patroni_cluster_list }}"
+  loop_control:
+    label: "{{ item.database_dir }}"
 
 - name: Ensure config dir
   become: yes
   become_user: root
   file:
-    path: "{{ patroni_config_dir }}"
+    path: "{{ item.config_dir }}"
     state: directory
     mode: 0755
     owner: root
     group: root
+  loop: "{{ patroni_cluster_list }}"
+  loop_control:
+    label: "{{ item.config_dir }}"
 
 - name: Ensure config file
   template:
     src: "patroni.j2"
-    dest: "{{ patroni_config_dir }}/patroni.yml"
+    dest: "{{ item.config_dir }}/patroni.yml"
     mode: "600"
     owner: postgres
+  loop: "{{ patroni_cluster_list }}"
+  loop_control:
+    label: "{{ item.config_dir }}/patroni.yml"
 
 - name: Include docker-related patroni tasks
-  include_tasks: run_patroni_in_docker.yml
+  include_tasks:
+    file: "run_patroni_in_docker.yml"
+    apply:
+      tags: patroni
+  tags: patroni
